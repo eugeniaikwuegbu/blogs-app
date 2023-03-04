@@ -45,21 +45,4 @@ export class UtilityService {
       throw new Error(err);
     }
   }
-
-  paginate = (
-    data: any[],
-    total: number,
-    perPage: number,
-    pageNumber: number,
-  ): IPaginatedRes => {
-    return {
-      data,
-      pagination: {
-        total,
-        perPage,
-        pageNumber,
-        pageSize: data.length,
-      },
-    };
-  };
 }

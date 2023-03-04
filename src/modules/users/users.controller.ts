@@ -1,34 +1,54 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
+@ApiTags('User')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const response = await this.usersService.registerUser(createUserDto);
+    return { message: 'User created successfully', response };
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    const response = await this.usersService.findAllUsers();
+    return { message: 'Users fetched successfully', response };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findUserById(+id);
+  async findOne(@Param('id') id: string) {
+    const response = await this.usersService.findById(id);
+
+    return { message: 'User fetched successfully', response };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    const response = await this.usersService.updateUser(id, updateUserDto);
+    console.log(response);
+    return { message: 'User details updated successfully', response };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  async deleteUser(@Param('id') id: string) {
+    const response = await this.usersService.deleteUser(id);
+    return { message: 'User deleted successfully', response };
   }
 }

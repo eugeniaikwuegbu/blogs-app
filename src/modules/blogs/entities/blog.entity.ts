@@ -23,6 +23,8 @@ export class Blog extends BaseModel {
 
   @BeforeInsert()
   generateBlogUrl() {
+    console.log('here');
+
     const randomString = UtilityService.randomAlphaNumericString(9);
     this.blog_url = `${process.env.BASE_URL}/blog/${randomString}`;
   }
