@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { UtilityService } from 'src/helpers/util.service';
 import { DataSource } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { LoginDTO } from './dto/login-dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
@@ -15,8 +16,7 @@ export class UsersService {
   private readonly utilService: UtilityService;
 
   async registerUser(createUserDto: CreateUserDto): Promise<Partial<User>> {
-    let user;
-    user = await this.findOne('email', createUserDto.email);
+    const user = await this.findOne('email', createUserDto.email);
 
     if (user.length > 0) {
       throw new HttpException(
@@ -29,7 +29,7 @@ export class UsersService {
       createUserDto.password,
     );
 
-    user = await this.dataSource.query(
+    await this.dataSource.query(
       `INSERT INTO "user" (full_name, email, user_name, password) VALUES ('${createUserDto.full_name}', '${createUserDto.email}', '${createUserDto.user_name}', '${hashedPassword}' );`,
     );
 
@@ -38,6 +38,34 @@ export class UsersService {
       email: createUserDto.email,
       user_name: createUserDto.user_name,
     };
+  }
+
+  async login(payload: LoginDTO) {
+    const user = await this.findOne('email', payload?.email);
+    if (user.length < 1)
+      throw new HttpException(
+        `User with email: ${payload?.email} does not exist`,
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const isValidPAssword = await this.utilService.checkIfPasswordIsValid(
+      user[0].password,
+      payload.password,
+    );
+
+    if (!isValidPAssword)
+      throw new HttpException(
+        'Incorrect email or password',
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const expiresIn = process.env.JWT_AUTH_TOKEN_VALIDATION_LENGTH;
+
+    const token = await this.utilService.generateToken(
+      { id: user[0].id },
+      expiresIn,
+    );
+    return { user: user[0], token };
   }
 
   async findAllUsers() {

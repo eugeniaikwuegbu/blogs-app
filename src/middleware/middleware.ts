@@ -20,7 +20,7 @@ export class VerifyTokenMiddleware implements NestMiddleware {
   async use(req: IAuthenticatedReq, res: Response, next: NextFunction) {
     if (!req.header('authorization')) {
       throw new HttpException(
-        'Authorization header not found',
+        'Authorization header not found, Please login to continue',
         HttpStatus.UNAUTHORIZED,
       );
     }

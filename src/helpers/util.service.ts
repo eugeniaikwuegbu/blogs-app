@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import * as JWT from 'jsonwebtoken';
-import { IPaginatedRes } from 'src/interfaces/pagination';
 
 const randomstring = require('randomstring');
 
@@ -39,10 +38,14 @@ export class UtilityService {
 
   checkIfPasswordIsValid(oldPassword, newPassword): Boolean {
     try {
-      const storedPassword = oldPassword || '';
-      return bcrypt.compare(newPassword, storedPassword);
+      return bcrypt.compare(newPassword, oldPassword);
     } catch (err) {
       throw new Error(err);
     }
+  }
+
+  generateBlogUrl(): string {
+    const randomString = UtilityService.randomAlphaNumericString(9);
+    return `${process.env.BASE_URL}/blog/${randomString}`;
   }
 }

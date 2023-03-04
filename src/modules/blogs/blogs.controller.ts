@@ -6,39 +6,60 @@ import {
   Param,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { IAuthenticatedReq } from 'src/interfaces/authenticatedRequest';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 
-@Controller('blogs')
-@ApiTags('Blogs')
+@Controller('blog')
+@ApiTags('Blog')
 export class BlogsController {
   constructor(private readonly blogsService: BlogsService) {}
 
+  @ApiBearerAuth()
   @Post()
-  create(@Body() createBlogDto: CreateBlogDto) {
-    return this.blogsService.create(createBlogDto);
+  async addBlogPost(
+    @Req() request: IAuthenticatedReq,
+    @Body() payload: CreateBlogDto,
+  ) {
+    const response = await this.blogsService.createBlogPost(
+      request?.user[0],
+      payload,
+    );
+    return { message: 'Blog added successfully', response };
   }
 
+  @ApiBearerAuth()
   @Get()
-  findAll() {
-    return this.blogsService.findAll();
+  async findAllPosts() {
+    const response = await this.blogsService.findAllBlogs();
+    return { message: 'Blogs fetched successfully', response };
   }
 
+  @ApiBearerAuth()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.blogsService.findOne(+id);
+  async findBlogById(@Param('id') id: string) {
+    const response = await this.blogsService.findById(id);
+    return { message: 'Blog fetched successfully', response };
   }
 
+  @ApiBearerAuth()
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
-    return this.blogsService.update(+id, updateBlogDto);
+  async updateBlog(
+    @Param('id') id: string,
+    @Body() updateBlogDto: UpdateBlogDto,
+  ) {
+    const response = await this.blogsService.updateBlogPost(id, updateBlogDto);
+    return { message: 'Blog Updated successfully', response };
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.blogsService.remove(+id);
+  async deletePost(@Param('id') id: string) {
+    const response = await this.blogsService.deletePost(id);
+    return { message: 'Blog post deleted successfully', response };
   }
 }
