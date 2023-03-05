@@ -4,15 +4,14 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer, ValidationError } from 'class-validator';
 import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
-import { ResponseInterceptor } from './helpers/responseInterceptor';
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Happi Vibe Auth Service')
-    .setDescription('The Happi Vibe API Documentation')
+    .setTitle('Blog Service APIs')
+    .setDescription('The Blog Service API Documentation')
     .setVersion('1.0')
     .addBearerAuth({
       type: 'http',
@@ -42,8 +41,6 @@ async function bootstrap() {
       },
     }),
   );
-
-  app.useGlobalInterceptors(new ResponseInterceptor());
 
   const PORT = process.env.PORT || 6000;
   const nodeEnv = process.env.NODE_ENV || 'development';

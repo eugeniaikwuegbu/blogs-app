@@ -42,9 +42,9 @@ export class VerifyTokenMiddleware implements NestMiddleware {
         throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
       });
 
-    user = await this.userService.findById(decoded.id);
+    user = await this.userService.findSignedInUser(decoded.id);
 
-    if (!user)
+    if (user.length == 0)
       throw new HttpException(
         'User from token not found',
         HttpStatus.NOT_FOUND,
