@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { UtilityService } from 'src/helpers/util.service';
-import { DataSource } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDTO } from './dto/login-dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -41,15 +41,18 @@ export class UsersService {
   }
 
   async login(payload: LoginDTO) {
-    const user = await this.findOne('email', payload?.email);
-    if (user.length < 1)
+    const userData = await this.findOne('email', payload?.email);
+
+    if (userData.length < 1)
       throw new HttpException(
         `User with email: ${payload?.email} does not exist`,
         HttpStatus.BAD_REQUEST,
       );
 
+    const user = userData[0];
+
     const isValidPAssword = await this.utilService.checkIfPasswordIsValid(
-      user[0].password,
+      user.password,
       payload.password,
     );
 
@@ -59,17 +62,23 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
 
+    delete user.password;
+
     const expiresIn = process.env.JWT_AUTH_TOKEN_VALIDATION_LENGTH;
 
     const token = await this.utilService.generateToken(
-      { id: user[0].id },
+      { id: userData[0].id },
       expiresIn,
     );
-    return { user: user[0], token };
+    return { user: user, token };
   }
 
   async findAllUsers() {
-    return await this.dataSource.query('SELECT * FROM "user";');
+    const users = await this.dataSource.query('SELECT * FROM "user";');
+
+    users.map((user) => delete user.password);
+
+    return users;
   }
 
   async findOne(searchColumn: string, searchValue: string) {
@@ -87,36 +96,27 @@ export class UsersService {
       throw new HttpException('User does not exist', HttpStatus.BAD_REQUEST);
     }
 
+    delete user[0].password;
+
     return user;
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
-    if (updateUserDto.password && updateUserDto.full_name) {
-      const hashedPassword = await this.utilService.hashPassword(
+    if (updateUserDto.password) {
+      updateUserDto.password = await this.utilService.hashPassword(
         updateUserDto?.password,
-      );
-      await this.dataSource.query(
-        `UPDATE "user" SET full_name = '${updateUserDto.full_name}',
-        password = '${hashedPassword}' WHERE id = '${id}'`,
-      );
-    } else if (!updateUserDto?.full_name) {
-      const hashedPassword = await this.utilService.hashPassword(
-        updateUserDto?.password,
-      );
-      await this.dataSource.query(
-        `UPDATE "user" SET password = '${hashedPassword}' WHERE id = '${id}'`,
-      );
-    } else if (!updateUserDto.password) {
-      await this.dataSource.query(
-        `UPDATE "user" SET full_name = '${updateUserDto.full_name}' WHERE id = '${id}'`,
       );
     }
 
+    await this.dataSource.getRepository('user').update(id, updateUserDto);
     return await this.findById(id);
   }
 
   async deleteUser(id: string) {
     await this.findById(id);
+
+    // rollback blogs created by this user
+    await this.dataSource.getRepository('blog').delete({ user: In([id]) });
 
     await this.dataSource.query(`DELETE FROM "user" WHERE id = '${id}'`);
   }

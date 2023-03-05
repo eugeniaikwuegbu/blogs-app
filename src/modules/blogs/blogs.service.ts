@@ -59,26 +59,12 @@ export class BlogsService {
     return blog;
   }
 
-  // todo: come back to this
-  async updateBlogPost(id: string, updateBlogPost: UpdateBlogDto) {
-    if (updateBlogPost.head_line && updateBlogPost.content) {
-      await this.dataSource.query(
-        `UPDATE "blog" SET head_line = '${updateBlogPost.head_line}',
-        content = '${updateBlogPost.content}' WHERE id = '${id}'`,
-      );
-    } else if (!updateBlogPost?.content) {
-      await this.dataSource.query(
-        `UPDATE "blog" SET head_line = '${updateBlogPost.head_line}' WHERE id = '${id}'`,
-      );
-    } else if (!updateBlogPost.head_line) {
-      await this.dataSource.query(
-        `UPDATE "blog" SET content = '${updateBlogPost.content}' WHERE id = '${id}'`,
-      );
-    }
-
-    return await this.findById(id);
+  async updateBlogPost(id: string, payload: UpdateBlogDto) {
+    await this.dataSource.getRepository('blog').update(id, payload);
+    const update = await this.findById(id);
+    update[0].updated_at = new Date();
+    return update;
   }
-
   async deletePost(id: string) {
     await this.findById(id);
     await this.dataSource.query(`DELETE FROM "blog" WHERE id = '${id}'`);
