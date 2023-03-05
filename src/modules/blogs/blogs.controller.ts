@@ -3,13 +3,16 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Patch,
   Post,
   Req,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { IAuthenticatedReq } from 'src/interfaces/authenticatedRequest';
+import { BaseService } from '../../helpers/responseInterceptor';
+import { IAuthenticatedReq } from '../../interfaces/authenticatedRequest';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
@@ -17,7 +20,10 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 @Controller('blog')
 @ApiTags('Blog')
 export class BlogsController {
-  constructor(private readonly blogsService: BlogsService) {}
+  constructor(
+    private readonly blogsService: BlogsService,
+    private readonly baseService: BaseService,
+  ) {}
 
   @ApiBearerAuth()
   @Post()
@@ -25,25 +31,58 @@ export class BlogsController {
     @Req() request: IAuthenticatedReq,
     @Body() payload: CreateBlogDto,
   ) {
-    const response = await this.blogsService.createBlogPost(
-      request?.user[0],
-      payload,
-    );
-    return { message: 'Blog added successfully', response };
+    try {
+      const response = await this.blogsService.createBlogPost(
+        request?.user[0],
+        payload,
+      );
+      return this.baseService.transformResponse(
+        'Blog added successfully',
+        response,
+        HttpStatus.CREATED,
+      );
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Operation Failed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @ApiBearerAuth()
   @Get()
   async findAllPosts() {
-    const response = await this.blogsService.findAllBlogs();
-    return { message: 'Blogs fetched successfully', response };
+    try {
+      const response = await this.blogsService.findAllBlogs();
+      return this.baseService.transformResponse(
+        'Blogs fetched successfully',
+        response,
+        HttpStatus.OK,
+      );
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Operation Failed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @ApiBearerAuth()
   @Get(':id')
   async findBlogById(@Param('id') id: string) {
-    const response = await this.blogsService.findById(id);
-    return { message: 'Blog fetched successfully', response };
+    try {
+      const response = await this.blogsService.findById(id);
+      return this.baseService.transformResponse(
+        'Blog fetched successfully',
+        response,
+        HttpStatus.OK,
+      );
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Operation Failed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @ApiBearerAuth()
@@ -52,14 +91,40 @@ export class BlogsController {
     @Param('id') id: string,
     @Body() updateBlogDto: UpdateBlogDto,
   ) {
-    const response = await this.blogsService.updateBlogPost(id, updateBlogDto);
-    return { message: 'Blog Updated successfully', response };
+    try {
+      const response = await this.blogsService.updateBlogPost(
+        id,
+        updateBlogDto,
+      );
+      return this.baseService.transformResponse(
+        'Blog Updated successfully',
+        response,
+        HttpStatus.OK,
+      );
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Operation Failed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   @ApiBearerAuth()
   @Delete(':id')
   async deletePost(@Param('id') id: string) {
-    const response = await this.blogsService.deletePost(id);
-    return { message: 'Blog post deleted successfully', response };
+    try {
+      await this.blogsService.deletePost(id);
+      return this.baseService.transformResponse(
+        'Blog post deleted successfully',
+        {},
+        HttpStatus.OK,
+      );
+      return { message: '' };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Operation Failed',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

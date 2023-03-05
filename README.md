@@ -58,6 +58,9 @@ $ yarn run test:e2e
 $ yarn run test:cov
 ```
 
+## DataBase Schema Diagram
+https://dbdiagram.io/d/6402718a296d97641d8554d6
+
 ## Swagger Documentation
 https://localhost:2121/api/docs
 

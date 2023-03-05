@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { UtilityService } from 'src/helpers/util.service';
 import { DataSource, In } from 'typeorm';
+import { UtilityService } from '../../helpers/util.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDTO } from './dto/login-dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -97,6 +97,14 @@ export class UsersService {
     }
 
     delete user[0].password;
+
+    return user;
+  }
+
+  async findSignedInUser(id: string) {
+    const user = await this.dataSource.query(
+      `SELECT * FROM "user" WHERE  id = '${id}'`,
+    );
 
     return user;
   }
