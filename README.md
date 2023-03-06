@@ -26,7 +26,7 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+## Install node modules
 
 ```bash
 $ yarn install
@@ -51,6 +51,9 @@ $ yarn run start:prod
 # unit tests
 $ yarn run test
 
+# test a single file
+$ yarn run test users.controller.spec.ts
+
 # e2e tests
 $ yarn run test:e2e
 
@@ -65,7 +68,7 @@ https://dbdiagram.io/d/6402718a296d97641d8554d6
 https://localhost:2121/api/docs
 
 
-## Deployed API Url
+## Base API Url
 
 https://localhost:2121
 
