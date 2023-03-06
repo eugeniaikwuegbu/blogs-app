@@ -162,7 +162,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/blogs-api/dev/1678111327524-2023-03-06T14:02:07.524Z/blogs-api.zip"
+          "S3Key": "serverless/blogs-api/dev/1678114676483-2023-03-06T14:57:56.483Z/blogs-api.zip"
         },
         "Handler": "dist/lambda.handler",
         "Runtime": "nodejs14.x",
@@ -194,14 +194,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersion9TJyy3e2bLm4QG1v5CRXwfFfBjfq7plLkHtM0PCGM": {
+    "ApiLambdaVersionaOjkqjASB3Ea8LpQ9I5u7Q89p5yR8oK5F9Hl1WGHfI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "+w9ZohzEjoi2IpFSVQAcmbWiMP8ablA9Jno7GXk3oH4="
+        "CodeSha256": "UPrw1WrTcqOMwZpA2vyezCOxWb1efhECekFAQUqUY54="
       }
     },
     "ApiGatewayRestApi": {
@@ -326,7 +326,7 @@
         "ApiLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1678111264318": {
+    "ApiGatewayDeployment1678114552726": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -389,7 +389,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersion9TJyy3e2bLm4QG1v5CRXwfFfBjfq7plLkHtM0PCGM"
+        "Ref": "ApiLambdaVersionaOjkqjASB3Ea8LpQ9I5u7Q89p5yR8oK5F9Hl1WGHfI"
       },
       "Export": {
         "Name": "sls-blogs-api-dev-ApiLambdaFunctionQualifiedArn"
