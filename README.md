@@ -26,7 +26,7 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+## Install node modules
 
 ```bash
 $ yarn install
@@ -50,6 +50,9 @@ $ yarn run start:prod
 ```bash
 # unit tests
 $ yarn run test
+
+# test a single file
+$ yarn run test users.controller.spec.ts
 
 # e2e tests
 $ yarn run test:e2e
