@@ -1,0 +1,36 @@
+service: blogs-api
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-2
+  environment:
+    PORT: 2121
+    NODE_ENV: production
+
+    PG_HOST: blogs-database.cg5iwqy7qe4v.us-east-1.rds.amazonaws.com
+    PG_PORT: 5432
+    PG_USER: postgres
+    PG_PASSWORD: hello1234
+    PG_DATABASE: blogs-database
+
+    JWT_AUTH_TOKEN_VALIDATION_LENGTH: 2d
+    JWT_SECRET_KEY: Eugenia@Hello!@£$
+
+    BASE_URL: http://localhost:2121
+
+functions:
+  api:
+    handler: dist/lambda.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: any
+          path: /{proxy+}

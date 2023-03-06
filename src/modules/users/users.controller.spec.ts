@@ -1,12 +1,10 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { validate } from 'class-validator';
-import * as typeorm from 'typeorm';
 import { DataSource } from 'typeorm';
 import { BaseService } from '../../helpers/responseInterceptor';
 import { UtilityService } from '../../helpers/util.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
@@ -92,25 +90,6 @@ describe('UsersController', () => {
     });
   });
 
-  // describe('Login User', () => {
-  //   it('It should throw an error if user enters incorrect email or password', async () => {});
-
-  //   it('It should login user', async () => {
-  //     const loginData: LoginDTO = {
-  //       email: 'hello@hello.com',
-  //       password: 'password234',
-  //     };
-
-  //     jest
-  //       .spyOn(dataSource, 'query')
-  //       .mockImplementation(async () => ({ ...loginData }));
-  //     const response = await controller.login(loginData);
-
-  //     console.log(response);
-
-  //     expect(response.statusCode).toEqual(HttpStatus.OK);
-  //   });
-  // });
 
   describe('Find all Users', () => {
     it('It should find all users', async () => {
@@ -153,47 +132,4 @@ describe('UsersController', () => {
       expect(response.statusCode).toEqual(HttpStatus.OK);
     });
   });
-
-  // describe('Update User', () => {
-  //   it('It should update user by Id', async () => {
-  //     const data: UpdateUserDto = {
-  //       full_name: 'Eugy',
-  //       password: 'hello1234',
-  //     };
-  //     jest.spyOn(typeorm, 'getRepository').mockImplementation(() => {
-  //       const original = jest.requireActual('typeorm');
-  //       return {
-  //         ...original,
-  //         createQueryBuilder: jest.fn().mockImplementation(() => ({
-  //           subQuery: jest.fn().mockReturnThis() as unknown,
-  //           from: jest.fn().mockReturnThis() as unknown,
-  //           where: jest.fn().mockReturnThis() as unknown,
-  //           select: jest.fn().mockReturnThis() as unknown,
-  //           getQuery: jest.fn().mockReturnThis() as unknown,
-  //           setParameter: jest.fn().mockReturnThis() as unknown,
-  //           update: jest.fn().mockReturnThis() as unknown,
-  //           getMany: jest.fn().mockResolvedValue([]) as unknown,
-  //         })),
-  //       };
-  //     });
-
-  //     jest.spyOn(dataSource, 'query').mockImplementation(async () => (['02ea766e-e22f-4841-ac04-1d999755cb4c', data]));
-
-
-  //     const response = await controller.updateUser(
-  //       '02ea766e-e22f-4841-ac04-1d999755cb4c',
-  //       data,
-  //     );
-
-  //     console.log(response);
-      
-  //   });
-  // });
-
-  // describe('Delete User', () => {
-  //   it('It should throw error if user with Id does not exist', async () => {});
-  //   it('It should delete all blogs created by user', async () => {});
-
-  //   it('It should delete user by Id', async () => {});
-  // });
 });
