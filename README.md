@@ -68,7 +68,7 @@ https://dbdiagram.io/d/6402718a296d97641d8554d6
 https://localhost:2121/api/docs
 
 
-## Deployed API Url
+## Base API Url
 
 https://localhost:2121
 
