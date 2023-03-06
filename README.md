@@ -67,7 +67,7 @@ https://localhost:2121/api/docs
 
 ## Deployed API Url
 
-https://localhost:2121/api/docs
+https://localhost:2121
 
 ## Stay in touch
 
